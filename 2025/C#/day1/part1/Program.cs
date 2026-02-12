@@ -42,10 +42,10 @@ public class Safe
   {
     this.currentNumber += rotation;
 
-    while (this.currentNumber < 0)
-      this.currentNumber = this.currentNumber + 100;
-    while (this.currentNumber > 99)
-      this.currentNumber = this.currentNumber - 100;
+    if (this.currentNumber < 0)
+      this.currentNumber = 100 + this.currentNumber % 100;
+    if (this.currentNumber > 99)
+      this.currentNumber %= 100;
 
     if (this.currentNumber == 0)
       this.password++;
