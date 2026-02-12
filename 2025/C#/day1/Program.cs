@@ -18,8 +18,8 @@ class Program
       String? line;
       while ((line = reader.ReadLine()) != null)
       {
-        RotateInstruction instruction = RotateInstruction.Parse(line);
-        safe.Rotate(instruction);
+        int rotation = Safe.ParseInstruction(line);
+        safe.Rotate(rotation);
       } 
     }
     catch(Exception e) // Copied from docs
@@ -33,16 +33,14 @@ class Program
   }
 }
 
-public class Safe {
+public class Safe
+{
   int currentNumber = 50;
   uint password = 0;
 
-  public void Rotate(RotateInstruction instruction)
+  public void Rotate(int rotation)
   {
-    this.currentNumber += instruction.Direction switch {
-      RotateDirection.Right => instruction.Distance,
-      RotateDirection.Left => -instruction.Distance,
-    };
+    this.currentNumber += rotation;
 
     while (this.currentNumber < 0)
       this.currentNumber = this.currentNumber + 100;
@@ -57,28 +55,19 @@ public class Safe {
   {
     return this.password;
   }
-}
 
-public record RotateInstruction(RotateDirection Direction, int Distance)
-{
-  public static RotateInstruction Parse(string input)
+  public static int ParseInstruction(string input)
   {
     if (input.Length < 2)
-      throw new FormatException($"Instruction {input} is invalid");
-
-   RotateDirection direction = input[0] switch
+      throw new FormatException($"'{input}' is not a valid instruction");
+    int distance = int.Parse(input.Substring(1));
+  
+    int result = input[0] switch
     {
-      'R' => RotateDirection.Right,
-      'L' => RotateDirection.Left,
+      'R' => distance,
+      'L' => -distance,
       _ => throw new FormatException($"Invalid Direction {input[0]} in instruction {input}"),
     };
-    int distance = int.Parse(input.Substring(1));
-    return new RotateInstruction(direction, distance);
+    return result;
   }
-}
-
-public enum RotateDirection
-{
-  Left,
-  Right,
 }
